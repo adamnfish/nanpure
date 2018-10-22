@@ -1,0 +1,3 @@
+# Nanpure
+
+Sudoku UI.
