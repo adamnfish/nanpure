@@ -3,6 +3,7 @@ module Main exposing (..)
 import Browser
 import Html exposing (Html, text, div, h1, img)
 import Html.Attributes exposing (src)
+import Models
 
 
 ---- MODEL ----

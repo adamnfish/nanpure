@@ -1,4 +1,6 @@
-module Models exposing (Number, CellValue)
+module Models exposing (Number (..), Grid, CellValue (..), emptyGrid, getCell, getRow, getCol, getSquare, updateCell)
+
+import Array exposing (Array)
 
 
 type Number
@@ -17,93 +19,144 @@ type CellValue
   | Fixed Number
   | Input Number
 
+-- Grid is expose but not its constructor - Array is internal implementation detail
 type Grid =
-  Grid (
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue ),
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue ),
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue ),
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue ),
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue ),
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue ),
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue ),
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue ),
-    ( CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue )
-  )
+  Grid ( Array ( Array CellValue ) )
+
+type alias Cells =
+  { c1 : CellValue
+  , c2 : CellValue
+  , c3 : CellValue
+  , c4 : CellValue
+  , c5 : CellValue
+  , c6 : CellValue
+  , c7 : CellValue
+  , c8 : CellValue
+  , c9 : CellValue
+  }
+
+-- internal functions
+
+cells : CellValue -> CellValue -> CellValue -> CellValue -> CellValue -> CellValue -> CellValue -> CellValue -> CellValue -> Cells
+cells c1 c2 c3 c4 c5 c6 c7 c8 c9 =
+  { c1 = c1
+  , c2 = c2
+  , c3 = c3
+  , c4 = c4
+  , c5 = c5
+  , c6 = c6
+  , c7 = c7
+  , c8 = c8
+  , c9 = c9
+  }
+
+numberAsIndex : Number -> Int
+numberAsIndex num =
+  case num of
+    One -> 0
+    Two -> 1
+    Three -> 2
+    Four -> 3
+    Five -> 4
+    Six -> 5
+    Seven -> 6
+    Eight -> 7
+    Nine -> 8
+
+safeRow : Maybe ( Array CellValue ) -> Array CellValue
+safeRow mr =
+  case mr of
+    Nothing ->
+      Array.repeat 9 Empty
+    Just r ->
+      r
+safeCell : Maybe CellValue -> CellValue
+safeCell mcv =
+  case mcv of
+    Nothing ->
+      Empty
+    Just cv ->
+      cv
+
+arrayToCells : Array CellValue -> Cells
+arrayToCells cellValues =
+  cells
+    ( safeCell ( Array.get ( numberAsIndex One ) cellValues ) )
+    ( safeCell ( Array.get ( numberAsIndex Two ) cellValues ) )
+    ( safeCell ( Array.get ( numberAsIndex Three ) cellValues ) )
+    ( safeCell ( Array.get ( numberAsIndex Four ) cellValues ) )
+    ( safeCell ( Array.get ( numberAsIndex Five ) cellValues ) )
+    ( safeCell ( Array.get ( numberAsIndex Six ) cellValues ) )
+    ( safeCell ( Array.get ( numberAsIndex Seven ) cellValues ) )
+    ( safeCell ( Array.get ( numberAsIndex Eight ) cellValues ) )
+    ( safeCell ( Array.get ( numberAsIndex Nine ) cellValues ) )
+
+-- exposed functions
 
 emptyGrid : Grid
 emptyGrid =
-  Grid (
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty ),
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty ),
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty ),
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty ),
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty ),
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty ),
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty ),
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty ),
-    ( Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty )
-  )
+  let
+    row = Array.repeat 9 ()
+    rows = Array.map (\_ -> Array.repeat 9 Empty) row
+  in
+    Grid rows
 
 getCell : ( Number, Number ) -> Grid -> CellValue
-getCell ( x,  y ) ( Grid ( r1, r2, r3, r4, r5, r6, r7, r8, r9 ) ) =
+getCell ( x,  y ) ( Grid rows ) =
   let
-    row = case x of
-      One -> r1
-      Two -> r2
-      Three -> r3
-      Four -> r4
-      Five -> r5
-      Six -> r6
-      Seven -> r7
-      Eight -> r8
-      Nine -> r9
-    ( c1, c2, c3, c4, c5, c6, c7, c8, c9 ) = row
+    xi = numberAsIndex x
+    yi = numberAsIndex y
+    maybeCell =
+      ( Array.get yi rows )
+        |> Maybe.andThen ( Array.get xi )
   in
-    case y of
-      One -> c1
-      Two -> c2
-      Three -> c3
-      Four -> c4
-      Five -> c5
-      Six -> c6
-      Seven -> c7
-      Eight -> c8
-      Nine -> c9
+    safeCell maybeCell
 
-getRow : Number -> Grid -> (CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue)
-getRow x ( Grid ( r1, r2, r3, r4, r5, r6, r7, r8, r9 ) ) =
-  case x of
-    One -> r1
-    Two -> r2
-    Three -> r3
-    Four -> r4
-    Five -> r5
-    Six -> r6
-    Seven -> r7
-    Eight -> r8
-    Nine -> r9
-
-getCol : Number -> Grid -> (CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue)
-getCol y grid =
-  ???
-
-getSquare : Number -> Grid -> (CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue, CellValue)
-getSquare i grid =
-  ???
-
-updateCell : ( Number, Number ) -> Number -> Grid -> Grid
-updateCell ( x, y ) n grid =
+getRow : Number -> Grid -> Cells
+getRow y ( Grid rows ) =
   let
-    (
-      ( r1c1, r1c2, r1c3, r1c4, r1c5, r1c6, r1c7, r1c8, r1c9 ),
-      ( r2c1, r2c2, r2c3, r2c4, r2c5, r2c6, r2c7, r2c8, r2c9 ),
-      ( r3c1, r3c2, r3c3, r3c4, r3c5, r3c6, r3c7, r3c8, r3c9 ),
-      ( r4c1, r4c2, r4c3, r4c4, r4c5, r4c6, r4c7, r4c8, r4c9 ),
-      ( r5c1, r5c2, r5c3, r5c4, r5c5, r5c6, r5c7, r5c8, r5c9 ),
-      ( r6c1, r6c2, r6c3, r6c4, r6c5, r6c6, r6c7, r6c8, r6c9 ),
-      ( r7c1, r7c2, r7c3, r7c4, r7c5, r7c6, r7c7, r7c8, r7c9 ),
-      ( r8c1, r8c2, r8c3, r8c4, r8c5, r8c6, r8c7, r8c8, r8c9 ),
-      ( r9c1, r9c2, r9c3, r9c4, r9c5, r9c6, r9c7, r9c8, r9c9 ),
-    ) = grid
+    yi = numberAsIndex y
+    row = safeRow ( Array.get yi rows )
   in
-    ???
+    arrayToCells row
+
+getCol : Number -> Grid -> Cells
+getCol x ( Grid rows ) =
+  let
+    xi = numberAsIndex x
+    colMaybes = Array.map ( Array.get xi ) rows
+    col = Array.map safeCell colMaybes
+  in
+    arrayToCells col
+
+getSquare : Number -> Grid -> Cells
+getSquare i ( Grid rows ) =
+--  let
+--  in
+--    arrayToCells square
+  cells Empty Empty Empty Empty Empty Empty Empty Empty Empty
+
+updateCell : ( Number, Number ) -> Maybe Number -> Grid -> Result () Grid
+updateCell ( x, y ) maybeValue grid =
+  let
+    xi = numberAsIndex x
+    yi = numberAsIndex y
+    currentValue = getCell ( x, y ) grid
+    rows =
+      case grid of
+        Grid rs -> rs
+    currentRow = safeRow ( Array.get yi rows )
+    newCellValue =
+      case maybeValue of
+        Just n ->
+          Input n
+        Nothing ->
+          Empty
+    newRow = Array.set xi newCellValue currentRow
+    newGrid = Array.set yi newRow rows
+  in
+    case currentValue of
+      Fixed _ ->
+        Err ()
+      _ ->
+        Ok ( Grid newGrid )
