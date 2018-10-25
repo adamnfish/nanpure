@@ -1,4 +1,4 @@
-module Models exposing (Number (..), Grid, CellValue (..), emptyGrid, getCell, getRow, getCol, getSquare, updateCell)
+module Grid exposing (Number (..), Grid, CellValue (..), emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle)
 
 import Array exposing (Array)
 
@@ -19,7 +19,7 @@ type CellValue
   | Fixed Number
   | Input Number
 
--- Grid is expose but not its constructor - Array is internal implementation detail
+-- Grid is exposed but not its constructor - Array is internal implementation detail
 type Grid =
   Grid ( Array ( Array CellValue ) )
 
@@ -63,6 +63,7 @@ numberAsIndex num =
     Eight -> 7
     Nine -> 8
 
+-- safeX follows `Array.get` because we know statically the underlying Array will have 9 elements
 safeRow : Maybe ( Array CellValue ) -> Array CellValue
 safeRow mr =
   case mr of
@@ -91,6 +92,25 @@ arrayToCells cellValues =
     ( safeCell ( Array.get ( numberAsIndex Eight ) cellValues ) )
     ( safeCell ( Array.get ( numberAsIndex Nine ) cellValues ) )
 
+updateCell : ( Number, Number ) -> CellValue -> Grid -> Result () Grid
+updateCell (x, y) cellValue grid =
+  let
+    xi = numberAsIndex x
+    yi = numberAsIndex y
+    rows =
+      case grid of
+        Grid rs -> rs
+    currentValue = getCell ( x, y ) grid
+    currentRow = safeRow ( Array.get yi rows )
+    newRow = Array.set xi cellValue currentRow
+    newGrid = Array.set yi newRow rows
+  in
+    case currentValue of
+      Fixed _ ->
+        Err ()
+      _ ->
+        Ok ( Grid newGrid )
+
 -- exposed functions
 
 emptyGrid : Grid
@@ -100,6 +120,15 @@ emptyGrid =
     rows = Array.map (\_ -> Array.repeat 9 Empty) row
   in
     Grid rows
+
+puzzle : List ((Number, Number), Number) -> Result () Grid
+puzzle initialNumbers =
+  List.foldl
+    ( \((x, y), value) result ->
+      Result.andThen ( updateCell (x, y) ( Fixed value ) ) result
+    )
+    ( Ok emptyGrid )
+    initialNumbers
 
 getCell : ( Number, Number ) -> Grid -> CellValue
 getCell ( x,  y ) ( Grid rows ) =
@@ -131,32 +160,13 @@ getCol x ( Grid rows ) =
 
 getSquare : Number -> Grid -> Cells
 getSquare i ( Grid rows ) =
---  let
---  in
---    arrayToCells square
+  -- TODO
   cells Empty Empty Empty Empty Empty Empty Empty Empty Empty
 
-updateCell : ( Number, Number ) -> Maybe Number -> Grid -> Result () Grid
-updateCell ( x, y ) maybeValue grid =
-  let
-    xi = numberAsIndex x
-    yi = numberAsIndex y
-    currentValue = getCell ( x, y ) grid
-    rows =
-      case grid of
-        Grid rs -> rs
-    currentRow = safeRow ( Array.get yi rows )
-    newCellValue =
-      case maybeValue of
-        Just n ->
-          Input n
-        Nothing ->
-          Empty
-    newRow = Array.set xi newCellValue currentRow
-    newGrid = Array.set yi newRow rows
-  in
-    case currentValue of
-      Fixed _ ->
-        Err ()
-      _ ->
-        Ok ( Grid newGrid )
+setCell : ( Number, Number ) -> Number -> Grid -> Result () Grid
+setCell (x, y) value grid =
+  updateCell (x, y) ( Input value ) grid
+
+clearCell : ( Number, Number ) -> Grid -> Result () Grid
+clearCell (x, y) grid =
+  updateCell (x, y) Empty grid
