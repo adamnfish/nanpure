@@ -1,4 +1,8 @@
-module Grid exposing (Number (..), Grid, CellValue (..), emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle)
+module Grid exposing
+  (
+    Number (..), Grid, CellValue (..), emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle,
+    gridAsString
+  )
 
 import Array exposing (Array)
 
@@ -62,6 +66,19 @@ numberAsIndex num =
     Seven -> 6
     Eight -> 7
     Nine -> 8
+
+numberAsString : Number -> String
+numberAsString num =
+  case num of
+    One -> "1"
+    Two -> "2"
+    Three -> "3"
+    Four -> "4"
+    Five -> "5"
+    Six -> "6"
+    Seven -> "7"
+    Eight -> "8"
+    Nine -> "9"
 
 -- safeX follows `Array.get` because we know statically the underlying Array will have 9 elements
 safeRow : Maybe ( Array CellValue ) -> Array CellValue
@@ -131,7 +148,7 @@ puzzle initialNumbers =
     initialNumbers
 
 getCell : ( Number, Number ) -> Grid -> CellValue
-getCell ( x,  y ) ( Grid rows ) =
+getCell (x, y) ( Grid rows ) =
   let
     xi = numberAsIndex x
     yi = numberAsIndex y
@@ -170,3 +187,58 @@ setCell (x, y) value grid =
 clearCell : ( Number, Number ) -> Grid -> Result () Grid
 clearCell (x, y) grid =
   updateCell (x, y) Empty grid
+
+-- representations
+
+cellAsString : CellValue -> String
+cellAsString cell =
+  case cell of
+    Empty ->
+      " - "
+    Fixed num ->
+      "[" ++ ( numberAsString num ) ++ "]"
+    Input num ->
+      " " ++ ( numberAsString num ) ++ " "
+
+cellStr : (Number, Number) -> Grid -> String
+cellStr cell grid =
+  cellAsString ( getCell cell grid )
+
+
+gridAsString : Grid -> String
+gridAsString grid =
+  ( cellStr (One, One) grid ) ++ ( cellStr (Two, One) grid ) ++ ( cellStr (Three, One) grid ) ++ "|" ++
+    ( cellStr (Four, One) grid ) ++ ( cellStr (Five, One) grid ) ++ ( cellStr (Six, One) grid ) ++ "|" ++
+    ( cellStr (Seven, One) grid ) ++ ( cellStr (Eight, One) grid ) ++ ( cellStr (Nine, One) grid ) ++
+  "//" ++
+  ( cellStr (One, Two) grid ) ++ ( cellStr (Two, Two) grid ) ++ ( cellStr (Three, Two) grid ) ++ "|" ++
+    ( cellStr (Four, Two) grid ) ++ ( cellStr (Five, Two) grid ) ++ ( cellStr (Six, Two) grid ) ++ "|" ++
+    ( cellStr (Seven, Two) grid ) ++ ( cellStr (Eight, Two) grid ) ++ ( cellStr (Nine, Two) grid ) ++
+  "//" ++
+  ( cellStr (One, Three) grid ) ++ ( cellStr (Two, Three) grid ) ++ ( cellStr (Three, Three) grid ) ++ "|" ++
+    ( cellStr (Four, Three) grid ) ++ ( cellStr (Five, Three) grid ) ++ ( cellStr (Six, Three) grid ) ++ "|" ++
+    ( cellStr (Seven, Three) grid ) ++ ( cellStr (Eight, Three) grid ) ++ ( cellStr (Nine, Three) grid ) ++
+  "//" ++
+  ( cellStr (One, Four) grid ) ++ ( cellStr (Two, Four) grid ) ++ ( cellStr (Three, Four) grid ) ++ "|" ++
+    ( cellStr (Four, Four) grid ) ++ ( cellStr (Five, Four) grid ) ++ ( cellStr (Six, Four) grid ) ++ "|" ++
+    ( cellStr (Seven, Four) grid ) ++ ( cellStr (Eight, Four) grid ) ++ ( cellStr (Nine, Four) grid ) ++
+  "//" ++
+  ( cellStr (One, Five) grid ) ++ ( cellStr (Two, Five) grid ) ++ ( cellStr (Three, Five) grid ) ++ "|" ++
+    ( cellStr (Four, Five) grid ) ++ ( cellStr (Five, Five) grid ) ++ ( cellStr (Six, Five) grid ) ++ "|" ++
+    ( cellStr (Seven, Five) grid ) ++ ( cellStr (Eight, Five) grid ) ++ ( cellStr (Nine, Five) grid ) ++
+  "//" ++
+  ( cellStr (One, Six) grid ) ++ ( cellStr (Two, Six) grid ) ++ ( cellStr (Three, Six) grid ) ++ "|" ++
+    ( cellStr (Four, Six) grid ) ++ ( cellStr (Five, Six) grid ) ++ ( cellStr (Six, Six) grid ) ++ "|" ++
+    ( cellStr (Seven, Six) grid ) ++ ( cellStr (Eight, Six) grid ) ++ ( cellStr (Nine, Six) grid ) ++
+  "//" ++
+  ( cellStr (One, Seven) grid ) ++ ( cellStr (Two, Seven) grid ) ++ ( cellStr (Three, Seven) grid ) ++ "|" ++
+    ( cellStr (Four, Seven) grid ) ++ ( cellStr (Five, Seven) grid ) ++ ( cellStr (Six, Seven) grid ) ++ "|" ++
+    ( cellStr (Seven, Seven) grid ) ++ ( cellStr (Eight, Seven) grid ) ++ ( cellStr (Nine, Seven) grid ) ++
+  "//" ++
+  ( cellStr (One, Eight) grid ) ++ ( cellStr (Two, Eight) grid ) ++ ( cellStr (Three, Eight) grid ) ++ "|" ++
+    ( cellStr (Four, Eight) grid ) ++ ( cellStr (Five, Eight) grid ) ++ ( cellStr (Six, Eight) grid ) ++ "|" ++
+    ( cellStr (Seven, Eight) grid ) ++ ( cellStr (Eight, Eight) grid ) ++ ( cellStr (Nine, Eight) grid ) ++
+  "//" ++
+  ( cellStr (One, Nine) grid ) ++ ( cellStr (Two, Nine) grid ) ++ ( cellStr (Three, Nine) grid ) ++ "|" ++
+    ( cellStr (Four, Nine) grid ) ++ ( cellStr (Five, Nine) grid ) ++ ( cellStr (Six, Nine) grid ) ++ "|" ++
+    ( cellStr (Seven, Nine) grid ) ++ ( cellStr (Eight, Nine) grid ) ++ ( cellStr (Nine, Nine) grid )
