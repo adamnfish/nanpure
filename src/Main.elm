@@ -3,19 +3,30 @@ module Main exposing (..)
 import Browser
 import Html exposing (Html, text, div, h1, img)
 import Html.Attributes exposing (src)
-import Models
+
+import Grid exposing (Number (..), Grid, CellValue (..), Cells, emptyGrid)
 
 
 ---- MODEL ----
 
+type Selection
+    = NoSelection
+    | SeletedCell (Number, Number)
+    | SelectedSquare Number
 
 type alias Model =
-    {}
+    { grid : Grid
+    , selection : Selection
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { grid = emptyGrid
+      , selection = NoSelection
+      }
+    , Cmd.none
+    )
 
 
 

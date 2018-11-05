@@ -1,7 +1,7 @@
 module Grid exposing
-  (
-    Number (..), Grid, CellValue (..), emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle,
-    gridAsString
+  ( Number (..), Grid, CellValue (..), Cells
+  , emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle
+  , gridAsString
   )
 
 import Array exposing (Array)
@@ -176,9 +176,31 @@ getCol x ( Grid rows ) =
     arrayToCells col
 
 getSquare : Number -> Grid -> Cells
-getSquare i ( Grid rows ) =
+getSquare i grid =
   -- TODO
-  cells Empty Empty Empty Empty Empty Empty Empty Empty Empty
+  case i of
+    One -> 
+      cells
+        ( getCell (One, One) grid )
+        ( getCell (One, Two) grid )
+        ( getCell (One, Three) grid )
+        ( getCell (Two, One) grid )
+        ( getCell (Two, Two) grid )
+        ( getCell (Two, Three) grid )
+        ( getCell (Three, One) grid )
+        ( getCell (Three, Two) grid )
+        ( getCell (Three, Three) grid )
+    _ ->
+      cells
+        ( getCell (One, Four) grid )
+        ( getCell (One, Five) grid )
+        ( getCell (One, Six) grid )
+        ( getCell (Two, Four) grid )
+        ( getCell (Two, Five) grid )
+        ( getCell (Two, Six) grid )
+        ( getCell (Three, Four) grid )
+        ( getCell (Three, Five) grid )
+        ( getCell (Three, Six) grid )
 
 setCell : ( Number, Number ) -> Number -> Grid -> Result () Grid
 setCell (x, y) value grid =
