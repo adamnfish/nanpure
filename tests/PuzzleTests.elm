@@ -1,8 +1,8 @@
 module PuzzleTests exposing (suite)
 
-import Test exposing (..)
-import Fuzz exposing (Fuzzer)
 import Expect
+import Fuzz exposing (Fuzzer)
+import Test exposing (..)
 
 import Grid exposing (Number (..), CellValue (..), Cells)
 import Puzzle exposing (valid)

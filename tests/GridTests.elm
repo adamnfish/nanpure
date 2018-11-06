@@ -1,14 +1,12 @@
 module GridTests exposing (suite, distinct)
 
-import Test exposing (..)
-import Fuzz exposing (Fuzzer)
-import Set exposing (Set)
-import List.Extra
 import Expect
+import Fuzz exposing (Fuzzer)
+import List.Extra
+import Set exposing (Set)
+import Test exposing (..)
 
 import Grid exposing (Grid, Number (..), CellValue (..), emptyGrid, getCell, setCell, clearCell, puzzle)
-
--- http://package.elm-lang.org/packages/elm-community/elm-test/latest
 
 
 numFuzzer : Fuzzer Number

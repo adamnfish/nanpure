@@ -1,7 +1,7 @@
 module Grid exposing
   ( Number (..), Grid, CellValue (..), Cells
   , emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle
-  , gridAsString, numberAsString, numberAsIndex
+  , gridAsString, numberAsString, numberAsIndex, numberFromIndex
   )
 
 import Array exposing (Array)
@@ -67,6 +67,20 @@ numberAsIndex num =
     Eight -> 7
     Nine -> 8
 
+numberFromIndex : Int -> Result String Number
+numberFromIndex i =
+  case i of
+    0 -> Ok One
+    1 -> Ok Two
+    2 -> Ok Three
+    3 -> Ok Four
+    4 -> Ok Five
+    5 -> Ok Six
+    6 -> Ok Seven
+    7 -> Ok Eight
+    8 -> Ok Nine
+    _ -> Err ( "Invalid sudoku number " ++ ( String.fromInt i ) ++ ", needed 0 - 8" )
+
 numberAsString : Number -> String
 numberAsString num =
   case num of
@@ -109,7 +123,7 @@ arrayToCells cellValues =
     ( safeCell ( Array.get ( numberAsIndex Eight ) cellValues ) )
     ( safeCell ( Array.get ( numberAsIndex Nine ) cellValues ) )
 
-updateCell : ( Number, Number ) -> CellValue -> Grid -> Result () Grid
+updateCell : ( Number, Number ) -> CellValue -> Grid -> Result String Grid
 updateCell (x, y) cellValue grid =
   let
     xi = numberAsIndex x
@@ -124,7 +138,7 @@ updateCell (x, y) cellValue grid =
   in
     case currentValue of
       Fixed _ ->
-        Err ()
+        Err "Cannot update fixed cell"
       _ ->
         Ok ( Grid newGrid )
 
@@ -138,7 +152,7 @@ emptyGrid =
   in
     Grid rows
 
-puzzle : List ((Number, Number), Number) -> Result () Grid
+puzzle : List ((Number, Number), Number) -> Result String Grid
 puzzle initialNumbers =
   List.foldl
     ( \((x, y), value) result ->
@@ -202,11 +216,11 @@ getSquare i grid =
         ( getCell (Three, Five) grid )
         ( getCell (Three, Six) grid )
 
-setCell : ( Number, Number ) -> Number -> Grid -> Result () Grid
+setCell : ( Number, Number ) -> Number -> Grid -> Result String Grid
 setCell (x, y) value grid =
   updateCell (x, y) ( Input value ) grid
 
-clearCell : ( Number, Number ) -> Grid -> Result () Grid
+clearCell : ( Number, Number ) -> Grid -> Result String Grid
 clearCell (x, y) grid =
   updateCell (x, y) Empty grid
 
