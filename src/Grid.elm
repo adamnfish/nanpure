@@ -1,7 +1,7 @@
 module Grid exposing
   ( Number (..), Grid, CellValue (..), Cells
   , emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle
-  , gridAsString
+  , gridAsString, numberAsString, numberAsIndex
   )
 
 import Array exposing (Array)
