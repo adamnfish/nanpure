@@ -2,10 +2,13 @@ module View exposing (view)
 
 import Html exposing (Html, text, div, h1, img, text)
 import Html.Attributes exposing (src, class)
+import Html.Events
 import Svg exposing (svg)
 import Svg.Attributes exposing
   (height, width, stroke, strokeWidth, fill, x, y, x1, x2, y1, y2, fontSize)
+import Svg.Events
 
+import Events exposing (navigationEvents)
 import Grid exposing (Grid, Number (..), CellValue (..), getCell, numberAsString, numberAsIndex)
 import Model exposing (Model (..))
 import Msg exposing (Msg (..))
@@ -70,6 +73,7 @@ gridDisplay grid =
       [ height "450"
       , width "450"
       , stroke "black"
+      , navigationEvents
       ]
       ( cellsEls ++ dividers )
 

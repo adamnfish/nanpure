@@ -5,8 +5,9 @@ import Grid exposing (Grid, Number (..))
 
 type Selection
   = NoSelection
-  | SeletedCell (Number, Number)
-  | SelectedSquare Number
+  | SelectedCell (Number, Number)
+  -- | SelectedGrid
+  -- | SelectedSquare Number
 
 type Model
   = Error String

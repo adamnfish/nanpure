@@ -1,7 +1,7 @@
 module Grid exposing
   ( Number (..), Grid, CellValue (..), Cells
   , emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle
-  , gridAsString, numberAsString, numberAsIndex, numberFromIndex
+  , gridAsString, numberAsString, numberAsIndex, numberFromIndex, numberMod
   )
 
 import Array exposing (Array)
@@ -93,6 +93,13 @@ numberAsString num =
     Seven -> "7"
     Eight -> "8"
     Nine -> "9"
+
+numberMod : Number -> Int -> Number
+numberMod num d =
+  let
+    newIndex = modBy ( ( numberAsIndex num ) + d ) 9
+  in
+    Result.withDefault One ( numberFromIndex newIndex )
 
 -- safeX follows `Array.get` because we know statically the underlying Array will have 9 elements
 safeRow : Maybe ( Array CellValue ) -> Array CellValue
