@@ -97,7 +97,7 @@ numberAsString num =
 numberMod : Number -> Int -> Number
 numberMod num d =
   let
-    newIndex = modBy ( ( numberAsIndex num ) + d ) 9
+    newIndex = modBy 9 ( ( numberAsIndex num ) + d )
   in
     Result.withDefault One ( numberFromIndex newIndex )
 

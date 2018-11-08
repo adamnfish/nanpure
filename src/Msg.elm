@@ -6,6 +6,7 @@ import Model exposing (Model (..), Selection (..))
 
 type Msg
   = NoOp
+  | Deselect
   | SelectUp
   | SelectDown
   | SelectLeft
@@ -25,6 +26,10 @@ update msg model =
       case msg of
         NoOp ->
           ( model, Cmd.none )
+        Deselect ->
+          ( Playing grid NoSelection
+          , Cmd.none
+          )
         SelectUp ->
            ( Playing grid ( moveSelection (0, 1) selection )
           , Cmd.none

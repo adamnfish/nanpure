@@ -10,7 +10,7 @@ import Svg.Events
 
 import Events exposing (navigationEvents)
 import Grid exposing (Grid, Number (..), CellValue (..), getCell, numberAsString, numberAsIndex)
-import Model exposing (Model (..))
+import Model exposing (Model (..), Selection (..))
 import Msg exposing (Msg (..))
 import Utils exposing (flattenList)
 
@@ -23,17 +23,17 @@ view model =
         [ text msg ]
     Playing grid selection ->
       div [ class "nanpure--container" ]
-        [ ( gridDisplay grid )
+        [ ( gridDisplay selection grid )
         ]
     Completed grid ->
       div [ class "nanpure--container" ]
-        [ ( gridDisplay grid )
+        [ ( gridDisplay NoSelection grid )
         ]
 
-gridDisplay : Grid -> Html Msg
-gridDisplay grid =
+gridDisplay : Selection -> Grid -> Html Msg
+gridDisplay selection grid =
   let
-    cellsEls = cells grid
+    cellsEls = cells selection grid
     dividers =
       [ Svg.line
         [ x1 "0"
@@ -77,15 +77,23 @@ gridDisplay grid =
       ]
       ( cellsEls ++ dividers )
 
-displayCell : CellValue -> (Number, Number) -> List ( Html Msg )
-displayCell cellValue (xNum, yNum) =
-  case cellValue of
-    Empty ->
-      cellHtml "" (xNum, yNum) False False
-    Input num ->
-      cellHtml ( numberAsString num ) (xNum, yNum) False False
-    Fixed num ->
-      cellHtml ( numberAsString num ) (xNum, yNum) True False
+displayCell : Selection -> CellValue -> (Number, Number) -> List ( Html Msg )
+displayCell selection cellValue (xNum, yNum) =
+  let
+    selected =
+      case selection of
+        NoSelection ->
+          False
+        SelectedCell (xSel, ySel) ->
+          xNum == xSel && yNum == ySel
+  in
+    case cellValue of
+      Empty ->
+        cellHtml "" (xNum, yNum) False selected
+      Input num ->
+        cellHtml ( numberAsString num ) (xNum, yNum) False selected
+      Fixed num ->
+        cellHtml ( numberAsString num ) (xNum, yNum) True selected
 
 cellHtml : String -> (Number, Number) -> Bool -> Bool -> List ( Html Msg )
 cellHtml contents (xNum, yNum) fixed selected =
@@ -96,9 +104,15 @@ cellHtml contents (xNum, yNum) fixed selected =
     yTextOffset = 29
     fillColour =
       if fixed then
-        "#cccccc"
+        if selected then
+          "#999999"
+        else
+          "#cccccc"
       else
-        "#ffffff"
+        if selected then
+          "#cccc88"
+        else
+          "#ffffff"
   in
     [ Svg.rect
       [ Svg.Attributes.class "nanpure--cell"
@@ -117,88 +131,88 @@ cellHtml contents (xNum, yNum) fixed selected =
       [ text contents ]
     ]
 
-cells : Grid -> List ( Html Msg )
-cells grid =
+cells : Selection -> Grid -> List ( Html Msg )
+cells selection grid =
   flattenList
-    [ displayCell ( getCell (One, One) grid ) (One, One)
-    , displayCell ( getCell (Two, One) grid ) (Two, One)
-    , displayCell ( getCell (Three, One) grid ) (Three, One)
-    , displayCell ( getCell (Four, One) grid ) (Four, One)
-    , displayCell ( getCell (Five, One) grid ) (Five, One)
-    , displayCell ( getCell (Six, One) grid ) (Six, One)
-    , displayCell ( getCell (Seven, One) grid ) (Seven, One)
-    , displayCell ( getCell (Eight, One) grid ) (Eight, One)
-    , displayCell ( getCell (Nine, One) grid ) (Nine, One)
-    , displayCell ( getCell (One, Two) grid ) (One, Two)
-    , displayCell ( getCell (Two, Two) grid ) (Two, Two)
-    , displayCell ( getCell (Three, Two) grid ) (Three, Two)
-    , displayCell ( getCell (Four, Two) grid ) (Four, Two)
-    , displayCell ( getCell (Five, Two) grid ) (Five, Two)
-    , displayCell ( getCell (Six, Two) grid ) (Six, Two)
-    , displayCell ( getCell (Seven, Two) grid ) (Seven, Two)
-    , displayCell ( getCell (Eight, Two) grid ) (Eight, Two)
-    , displayCell ( getCell (Nine, Two) grid ) (Nine, Two)
-    , displayCell ( getCell (One, Three) grid ) (One, Three)
-    , displayCell ( getCell (Two, Three) grid ) (Two, Three)
-    , displayCell ( getCell (Three, Three) grid ) (Three, Three)
-    , displayCell ( getCell (Four, Three) grid ) (Four, Three)
-    , displayCell ( getCell (Five, Three) grid ) (Five, Three)
-    , displayCell ( getCell (Six, Three) grid ) (Six, Three)
-    , displayCell ( getCell (Seven, Three) grid ) (Seven, Three)
-    , displayCell ( getCell (Eight, Three) grid ) (Eight, Three)
-    , displayCell ( getCell (Nine, Three) grid ) (Nine, Three)
-    , displayCell ( getCell (One, Four) grid ) (One, Four)
-    , displayCell ( getCell (Two, Four) grid ) (Two, Four)
-    , displayCell ( getCell (Three, Four) grid ) (Three, Four)
-    , displayCell ( getCell (Four, Four) grid ) (Four, Four)
-    , displayCell ( getCell (Five, Four) grid ) (Five, Four)
-    , displayCell ( getCell (Six, Four) grid ) (Six, Four)
-    , displayCell ( getCell (Seven, Four) grid ) (Seven, Four)
-    , displayCell ( getCell (Eight, Four) grid ) (Eight, Four)
-    , displayCell ( getCell (Nine, Four) grid ) (Nine, Four)
-    , displayCell ( getCell (One, Five) grid ) (One, Five)
-    , displayCell ( getCell (Two, Five) grid ) (Two, Five)
-    , displayCell ( getCell (Three, Five) grid ) (Three, Five)
-    , displayCell ( getCell (Four, Five) grid ) (Four, Five)
-    , displayCell ( getCell (Five, Five) grid ) (Five, Five)
-    , displayCell ( getCell (Six, Five) grid ) (Six, Five)
-    , displayCell ( getCell (Seven, Five) grid ) (Seven, Five)
-    , displayCell ( getCell (Eight, Five) grid ) (Eight, Five)
-    , displayCell ( getCell (Nine, Five) grid ) (Nine, Five)
-    , displayCell ( getCell (One, Six) grid ) (One, Six)
-    , displayCell ( getCell (Two, Six) grid ) (Two, Six)
-    , displayCell ( getCell (Three, Six) grid ) (Three, Six)
-    , displayCell ( getCell (Four, Six) grid ) (Four, Six)
-    , displayCell ( getCell (Five, Six) grid ) (Five, Six)
-    , displayCell ( getCell (Six, Six) grid ) (Six, Six)
-    , displayCell ( getCell (Seven, Six) grid ) (Seven, Six)
-    , displayCell ( getCell (Eight, Six) grid ) (Eight, Six)
-    , displayCell ( getCell (Nine, Six) grid ) (Nine, Six)
-    , displayCell ( getCell (One, Seven) grid ) (One, Seven)
-    , displayCell ( getCell (Two, Seven) grid ) (Two, Seven)
-    , displayCell ( getCell (Three, Seven) grid ) (Three, Seven)
-    , displayCell ( getCell (Four, Seven) grid ) (Four, Seven)
-    , displayCell ( getCell (Five, Seven) grid ) (Five, Seven)
-    , displayCell ( getCell (Six, Seven) grid ) (Six, Seven)
-    , displayCell ( getCell (Seven, Seven) grid ) (Seven, Seven)
-    , displayCell ( getCell (Eight, Seven) grid ) (Eight, Seven)
-    , displayCell ( getCell (Nine, Seven) grid ) (Nine, Seven)
-    , displayCell ( getCell (One, Eight) grid ) (One, Eight)
-    , displayCell ( getCell (Two, Eight) grid ) (Two, Eight)
-    , displayCell ( getCell (Three, Eight) grid ) (Three, Eight)
-    , displayCell ( getCell (Four, Eight) grid ) (Four, Eight)
-    , displayCell ( getCell (Five, Eight) grid ) (Five, Eight)
-    , displayCell ( getCell (Six, Eight) grid ) (Six, Eight)
-    , displayCell ( getCell (Seven, Eight) grid ) (Seven, Eight)
-    , displayCell ( getCell (Eight, Eight) grid ) (Eight, Eight)
-    , displayCell ( getCell (Nine, Eight) grid ) (Nine, Eight)
-    , displayCell ( getCell (One, Nine) grid ) (One, Nine)
-    , displayCell ( getCell (Two, Nine) grid ) (Two, Nine)
-    , displayCell ( getCell (Three, Nine) grid ) (Three, Nine)
-    , displayCell ( getCell (Four, Nine) grid ) (Four, Nine)
-    , displayCell ( getCell (Five, Nine) grid ) (Five, Nine)
-    , displayCell ( getCell (Six, Nine) grid ) (Six, Nine)
-    , displayCell ( getCell (Seven, Nine) grid ) (Seven, Nine)
-    , displayCell ( getCell (Eight, Nine) grid ) (Eight, Nine)
-    , displayCell ( getCell (Nine, Nine) grid ) (Nine, Nine)
+    [ displayCell selection ( getCell (One, One) grid ) (One, One)
+    , displayCell selection ( getCell (Two, One) grid ) (Two, One)
+    , displayCell selection ( getCell (Three, One) grid ) (Three, One)
+    , displayCell selection ( getCell (Four, One) grid ) (Four, One)
+    , displayCell selection ( getCell (Five, One) grid ) (Five, One)
+    , displayCell selection ( getCell (Six, One) grid ) (Six, One)
+    , displayCell selection ( getCell (Seven, One) grid ) (Seven, One)
+    , displayCell selection ( getCell (Eight, One) grid ) (Eight, One)
+    , displayCell selection ( getCell (Nine, One) grid ) (Nine, One)
+    , displayCell selection ( getCell (One, Two) grid ) (One, Two)
+    , displayCell selection ( getCell (Two, Two) grid ) (Two, Two)
+    , displayCell selection ( getCell (Three, Two) grid ) (Three, Two)
+    , displayCell selection ( getCell (Four, Two) grid ) (Four, Two)
+    , displayCell selection ( getCell (Five, Two) grid ) (Five, Two)
+    , displayCell selection ( getCell (Six, Two) grid ) (Six, Two)
+    , displayCell selection ( getCell (Seven, Two) grid ) (Seven, Two)
+    , displayCell selection ( getCell (Eight, Two) grid ) (Eight, Two)
+    , displayCell selection ( getCell (Nine, Two) grid ) (Nine, Two)
+    , displayCell selection ( getCell (One, Three) grid ) (One, Three)
+    , displayCell selection ( getCell (Two, Three) grid ) (Two, Three)
+    , displayCell selection ( getCell (Three, Three) grid ) (Three, Three)
+    , displayCell selection ( getCell (Four, Three) grid ) (Four, Three)
+    , displayCell selection ( getCell (Five, Three) grid ) (Five, Three)
+    , displayCell selection ( getCell (Six, Three) grid ) (Six, Three)
+    , displayCell selection ( getCell (Seven, Three) grid ) (Seven, Three)
+    , displayCell selection ( getCell (Eight, Three) grid ) (Eight, Three)
+    , displayCell selection ( getCell (Nine, Three) grid ) (Nine, Three)
+    , displayCell selection ( getCell (One, Four) grid ) (One, Four)
+    , displayCell selection ( getCell (Two, Four) grid ) (Two, Four)
+    , displayCell selection ( getCell (Three, Four) grid ) (Three, Four)
+    , displayCell selection ( getCell (Four, Four) grid ) (Four, Four)
+    , displayCell selection ( getCell (Five, Four) grid ) (Five, Four)
+    , displayCell selection ( getCell (Six, Four) grid ) (Six, Four)
+    , displayCell selection ( getCell (Seven, Four) grid ) (Seven, Four)
+    , displayCell selection ( getCell (Eight, Four) grid ) (Eight, Four)
+    , displayCell selection ( getCell (Nine, Four) grid ) (Nine, Four)
+    , displayCell selection ( getCell (One, Five) grid ) (One, Five)
+    , displayCell selection ( getCell (Two, Five) grid ) (Two, Five)
+    , displayCell selection ( getCell (Three, Five) grid ) (Three, Five)
+    , displayCell selection ( getCell (Four, Five) grid ) (Four, Five)
+    , displayCell selection ( getCell (Five, Five) grid ) (Five, Five)
+    , displayCell selection ( getCell (Six, Five) grid ) (Six, Five)
+    , displayCell selection ( getCell (Seven, Five) grid ) (Seven, Five)
+    , displayCell selection ( getCell (Eight, Five) grid ) (Eight, Five)
+    , displayCell selection ( getCell (Nine, Five) grid ) (Nine, Five)
+    , displayCell selection ( getCell (One, Six) grid ) (One, Six)
+    , displayCell selection ( getCell (Two, Six) grid ) (Two, Six)
+    , displayCell selection ( getCell (Three, Six) grid ) (Three, Six)
+    , displayCell selection ( getCell (Four, Six) grid ) (Four, Six)
+    , displayCell selection ( getCell (Five, Six) grid ) (Five, Six)
+    , displayCell selection ( getCell (Six, Six) grid ) (Six, Six)
+    , displayCell selection ( getCell (Seven, Six) grid ) (Seven, Six)
+    , displayCell selection ( getCell (Eight, Six) grid ) (Eight, Six)
+    , displayCell selection ( getCell (Nine, Six) grid ) (Nine, Six)
+    , displayCell selection ( getCell (One, Seven) grid ) (One, Seven)
+    , displayCell selection ( getCell (Two, Seven) grid ) (Two, Seven)
+    , displayCell selection ( getCell (Three, Seven) grid ) (Three, Seven)
+    , displayCell selection ( getCell (Four, Seven) grid ) (Four, Seven)
+    , displayCell selection ( getCell (Five, Seven) grid ) (Five, Seven)
+    , displayCell selection ( getCell (Six, Seven) grid ) (Six, Seven)
+    , displayCell selection ( getCell (Seven, Seven) grid ) (Seven, Seven)
+    , displayCell selection ( getCell (Eight, Seven) grid ) (Eight, Seven)
+    , displayCell selection ( getCell (Nine, Seven) grid ) (Nine, Seven)
+    , displayCell selection ( getCell (One, Eight) grid ) (One, Eight)
+    , displayCell selection ( getCell (Two, Eight) grid ) (Two, Eight)
+    , displayCell selection ( getCell (Three, Eight) grid ) (Three, Eight)
+    , displayCell selection ( getCell (Four, Eight) grid ) (Four, Eight)
+    , displayCell selection ( getCell (Five, Eight) grid ) (Five, Eight)
+    , displayCell selection ( getCell (Six, Eight) grid ) (Six, Eight)
+    , displayCell selection ( getCell (Seven, Eight) grid ) (Seven, Eight)
+    , displayCell selection ( getCell (Eight, Eight) grid ) (Eight, Eight)
+    , displayCell selection ( getCell (Nine, Eight) grid ) (Nine, Eight)
+    , displayCell selection ( getCell (One, Nine) grid ) (One, Nine)
+    , displayCell selection ( getCell (Two, Nine) grid ) (Two, Nine)
+    , displayCell selection ( getCell (Three, Nine) grid ) (Three, Nine)
+    , displayCell selection ( getCell (Four, Nine) grid ) (Four, Nine)
+    , displayCell selection ( getCell (Five, Nine) grid ) (Five, Nine)
+    , displayCell selection ( getCell (Six, Nine) grid ) (Six, Nine)
+    , displayCell selection ( getCell (Seven, Nine) grid ) (Seven, Nine)
+    , displayCell selection ( getCell (Eight, Nine) grid ) (Eight, Nine)
+    , displayCell selection ( getCell (Nine, Nine) grid ) (Nine, Nine)
     ]
