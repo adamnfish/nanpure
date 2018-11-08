@@ -1,10 +1,11 @@
-module Subs exposing (navigate)
+module Subs exposing (navigate, input)
 
 import Browser.Events
 import Html.Events
 import Json.Decode as Json
 
-import Model exposing (Model)
+import Grid exposing (Number (..))
+import Model exposing (Model (..), Selection (..))
 import Msg exposing (Msg (..))
 
 
@@ -36,4 +37,57 @@ keyCodeToNavMsg keyCode =
     68 -> SelectRight
     76 -> SelectRight
     
+    _ -> NoOp
+
+input : Model -> Sub Msg
+input model =
+  case model of
+    Playing _ ( SelectedCell location ) ->
+      Browser.Events.onKeyDown
+        ( Json.map ( keyCodeToInputMsg location ) Html.Events.keyCode )
+    _ ->
+      Sub.none
+
+keyCodeToInputMsg : (Number, Number) -> Int -> Msg
+keyCodeToInputMsg location keyCode =
+  case keyCode of
+    -- DELETE / BACKSPACE
+    46  -> Delete location
+    8   -> Delete location
+    -- ONE
+    49  -> Enter location One
+    97  -> Enter location One
+
+    -- TWO
+    50  -> Enter location Two
+    98  -> Enter location Two
+
+    -- THREE
+    51  -> Enter location Three
+    99  -> Enter location Three
+
+    -- FOUR
+    52  -> Enter location Four
+    100 -> Enter location Four
+
+    -- FIVE
+    53  -> Enter location Five
+    101 -> Enter location Five
+
+    -- SIX
+    54  -> Enter location Six
+    102 -> Enter location Six
+
+    -- SEVEN
+    55  -> Enter location Seven
+    103 -> Enter location Seven
+
+    -- Eight
+    56  -> Enter location Eight
+    104 -> Enter location Eight
+
+    -- NINE
+    57  -> Enter location Nine
+    105 -> Enter location Nine
+
     _ -> NoOp
