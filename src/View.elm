@@ -8,8 +8,7 @@ import Svg.Attributes exposing
   (height, width, stroke, strokeWidth, fill, x, y, x1, x2, y1, y2, fontSize)
 import Svg.Events
 
-import Events exposing (navigationEvents)
-import Grid exposing (Grid, Number (..), CellValue (..), getCell, numberAsString, numberAsIndex)
+import Grid exposing (Grid, Number (..), CellValue (..), getCell, numberAsString, numberAsIndex, cellInSquare)
 import Model exposing (Model (..), Selection (..))
 import Msg exposing (Msg (..))
 import Utils exposing (flattenList)
@@ -73,7 +72,6 @@ gridDisplay selection grid =
       [ height "450"
       , width "450"
       , stroke "black"
-      , navigationEvents
       ]
       ( cellsEls ++ dividers )
 
@@ -86,6 +84,10 @@ displayCell selection cellValue (xNum, yNum) =
           False
         SelectedCell (xSel, ySel) ->
           xNum == xSel && yNum == ySel
+        SelectedGrid ->
+          True
+        SelectedSquare num ->
+          cellInSquare num (xNum, yNum)
   in
     case cellValue of
       Empty ->

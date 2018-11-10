@@ -1,6 +1,6 @@
 module Msg exposing (Msg (..), update)
 
-import Grid exposing (Number (..), numberMod, setCell, clearCell)
+import Grid exposing (Number (..), numberMod, setCell, clearCell, cellBySquareAndCellIndices)
 import Model exposing (Model (..), Selection (..))
 
 
@@ -11,9 +11,9 @@ type Msg
   | SelectDown
   | SelectLeft
   | SelectRight
-  -- | SelectGrid
-  -- | SelectSquare Number
-  -- | SelectSquareCell Number
+  | SelectGrid
+  | SelectSquare Number
+  | SelectSquareCell Number Number
   | Enter (Number, Number) Number
   | Delete (Number, Number)
 
@@ -64,6 +64,23 @@ update msg model =
               ( Playing updatedGrid selection
               , Cmd.none
               )
+        SelectGrid ->
+          ( Playing grid SelectedGrid
+          , Cmd.none
+          )
+        SelectSquare num ->
+          ( Playing grid ( SelectedSquare num )
+          , Cmd.none
+          )
+        SelectSquareCell square cell ->
+          let
+            selectedCell = cellBySquareAndCellIndices square cell
+          in
+            ( Playing grid ( SelectedCell selectedCell )
+            , Cmd.none
+            )
+
+
 
 moveSelection : (Int, Int) -> Selection -> Selection
 moveSelection (dx, dy) selection =
@@ -75,3 +92,5 @@ moveSelection (dx, dy) selection =
         ( numberMod xNum dx
         , numberMod yNum dy
         )
+    _ ->
+      selection

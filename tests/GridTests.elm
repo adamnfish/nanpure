@@ -6,7 +6,11 @@ import List.Extra
 import Set exposing (Set)
 import Test exposing (..)
 
-import Grid exposing (Grid, Number (..), CellValue (..), emptyGrid, getCell, setCell, clearCell, puzzle)
+import Grid exposing
+  (Grid, Number (..), CellValue (..)
+  , emptyGrid, getCell, setCell, clearCell, puzzle, cellInSquare
+  , cellBySquareAndCellIndices
+  )
 
 
 numFuzzer : Fuzzer Number
@@ -46,11 +50,11 @@ cellsFuzzer : Fuzzer ( List (Number, Number) )
 cellsFuzzer =
   Fuzz.map distinct ( Fuzz.list cellFuzzer )
 
-cellResultEquals : (Number, Number) -> CellValue -> Result () Grid -> Expect.Expectation
+cellResultEquals : (Number, Number) -> CellValue -> Result String Grid -> Expect.Expectation
 cellResultEquals (x, y) expected result =
   case result of
-    Err () ->
-      Expect.fail "grid update failed"
+    Err msg ->
+      Expect.fail ( "grid update failed: " ++ msg )
     Ok grid ->
       Expect.equal ( getCell (x, y) grid ) expected
 
@@ -89,6 +93,63 @@ suite =
                         cells
                       )
                     )
+        ]
+      , describe "cellInSquare"
+        [ test "(One, One) should be in square One" <|
+          \_ ->
+            Expect.equal True ( cellInSquare One (One, One) )
+        , test "(One, Two) should be in square One" <|
+          \_ ->
+            Expect.equal True ( cellInSquare One (One, Two) )
+        , test "(One, Three) should be in square One" <|
+          \_ ->
+            Expect.equal True ( cellInSquare One (One, Three) )
+        , test "(One, Four) should be in square Four" <|
+          \_ ->
+            Expect.equal True ( cellInSquare Four (One, Four) )
+        , test "(One, Five) should be in square Four" <|
+          \_ ->
+            Expect.equal True ( cellInSquare Four (One, Five) )
+        , test "(One, Six) should be in square Four" <|
+          \_ ->
+            Expect.equal True ( cellInSquare Four (One, Six) )
+        , test "(One, Seven) should be in square Seven" <|
+          \_ ->
+            Expect.equal True ( cellInSquare Seven (One, Seven) )
+        , test "(One, Eight) should be in square Seven" <|
+          \_ ->
+            Expect.equal True ( cellInSquare Seven (One, Eight) )
+        , test "(One, Nine) should be in square Seven" <|
+          \_ ->
+            Expect.equal True ( cellInSquare Seven (One, Nine) )
+        , test "(Three, Three) should be in square One" <|
+          \_ ->
+            Expect.equal True ( cellInSquare One (Three, Three) )
+        , test "(Four, One) should be in square Two" <|
+          \_ ->
+            Expect.equal True ( cellInSquare Two (Four, One) )
+        , test "(Nine, Nine) should be in square Nine" <|
+          \_ ->
+            Expect.equal True ( cellInSquare Nine (Nine, Nine) )
+        -- negative tests
+        , test "(One, One) should not be in square Nine" <|
+          \_ ->
+            Expect.equal False ( cellInSquare Nine (One, One) )
+        , test "(Four, One) should not be in square One" <|
+          \_ ->
+            Expect.equal False ( cellInSquare One (Four, One) )
+        ]
+      , describe "cellBySquareAndCellIndices"
+        [ test "retrieves the correct cell for One One" <|
+          \_ ->
+            Expect.equal (One, One) ( cellBySquareAndCellIndices One One )
+        , test "retrieves the correct cell for Four Four" <|
+          \_ ->
+            Expect.equal (One, Five) ( cellBySquareAndCellIndices Four Four )
+        , test "retrieves the correct cell for Two Two" <|
+          \_ ->
+            Expect.equal (Five, One) ( cellBySquareAndCellIndices Two Two )
+
         ]
       ]
 

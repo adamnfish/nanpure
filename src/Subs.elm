@@ -1,4 +1,4 @@
-module Subs exposing (navigate, input)
+module Subs exposing (navigate, input, zoom)
 
 import Browser.Events
 import Html.Events
@@ -9,8 +9,8 @@ import Model exposing (Model (..), Selection (..))
 import Msg exposing (Msg (..))
 
 
-navigate : Model -> Sub Msg
-navigate model =
+navigate : Sub Msg
+navigate =
   Browser.Events.onKeyDown
     ( Json.map keyCodeToNavMsg Html.Events.keyCode )
 
@@ -39,6 +39,43 @@ keyCodeToNavMsg keyCode =
     
     _ -> NoOp
 
+zoom : Model -> Sub Msg
+zoom model =
+  case model of
+    Playing _ SelectedGrid ->
+      Browser.Events.onKeyDown
+        ( Json.map ( zoomKeys SelectSquare ) Html.Events.keyCode )
+    Playing _ ( SelectedSquare num ) ->
+      Browser.Events.onKeyDown
+        ( Json.map ( zoomKeys ( SelectSquareCell num ) ) Html.Events.keyCode )
+    Playing _ _ ->
+      Browser.Events.onKeyDown
+        ( Json.map selectGrid Html.Events.keyCode )
+    _ ->
+      Sub.none
+
+selectGrid : Int -> Msg
+selectGrid keyCode =
+  if keyCode == 48 then
+    SelectGrid
+  else
+    NoOp
+
+zoomKeys : ( Number -> Msg ) -> Int -> Msg
+zoomKeys f keyCode =
+  case keyCode of
+    49 -> f One
+    50 -> f Two
+    51 -> f Three
+    52 -> f Four
+    53 -> f Five
+    54 -> f Six
+    55 -> f Seven
+    56 -> f Eight
+    57 -> f Nine
+
+    _ -> NoOp
+
 input : Model -> Sub Msg
 input model =
   case model of
@@ -57,35 +94,27 @@ keyCodeToInputMsg location keyCode =
     -- ONE
     49  -> Enter location One
     97  -> Enter location One
-
     -- TWO
     50  -> Enter location Two
     98  -> Enter location Two
-
     -- THREE
     51  -> Enter location Three
     99  -> Enter location Three
-
     -- FOUR
     52  -> Enter location Four
     100 -> Enter location Four
-
     -- FIVE
     53  -> Enter location Five
     101 -> Enter location Five
-
     -- SIX
     54  -> Enter location Six
     102 -> Enter location Six
-
     -- SEVEN
     55  -> Enter location Seven
     103 -> Enter location Seven
-
     -- Eight
     56  -> Enter location Eight
     104 -> Enter location Eight
-
     -- NINE
     57  -> Enter location Nine
     105 -> Enter location Nine

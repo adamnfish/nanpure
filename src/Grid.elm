@@ -1,7 +1,8 @@
 module Grid exposing
   ( Number (..), Grid, CellValue (..), Cells
-  , emptyGrid, getCell, getRow, getCol, getSquare, setCell, clearCell, puzzle
+  , emptyGrid, getCell, getRow, getCol, getSquare, cellInSquare, setCell, clearCell, puzzle
   , gridAsString, numberAsString, numberAsIndex, numberFromIndex, numberMod
+  , cellBySquareAndCellIndices
   )
 
 import Array exposing (Array)
@@ -100,6 +101,23 @@ numberMod num d =
     newIndex = modBy 9 ( ( numberAsIndex num ) + d )
   in
     Result.withDefault One ( numberFromIndex newIndex )
+
+cellBySquareAndCellIndices : Number -> Number -> (Number, Number)
+cellBySquareAndCellIndices squareNum cellNum =
+  let
+    squareIndex = numberAsIndex squareNum
+    cellIndex = numberAsIndex cellNum
+    xi = ( 3 * ( modBy 3 squareIndex ) ) + ( modBy 3 cellIndex )
+    yi = ( 3 * ( squareIndex // 3 ) ) + ( cellIndex // 3 )
+    xResult = numberFromIndex xi
+    yResult = numberFromIndex yi
+    cellResult = Result.map2 ( \x y -> (x, y) ) xResult yResult
+  in
+    case cellResult of
+      Err str ->
+        (One, One)
+      Ok cell ->
+        cell
 
 -- safeX follows `Array.get` because we know statically the underlying Array will have 9 elements
 safeRow : Maybe ( Array CellValue ) -> Array CellValue
@@ -222,6 +240,17 @@ getSquare i grid =
         ( getCell (Three, Four) grid )
         ( getCell (Three, Five) grid )
         ( getCell (Three, Six) grid )
+
+cellInSquare : Number -> (Number, Number) -> Bool
+cellInSquare squareNum (xNum, yNum) =
+  let
+    x = numberAsIndex xNum
+    y = numberAsIndex yNum
+    squareIndex = numberAsIndex squareNum
+    xMatches = ( modBy 3 squareIndex ) == ( x // 3 )
+    yMatches = ( squareIndex // 3 ) == ( y // 3 )
+  in
+    xMatches && yMatches
 
 setCell : ( Number, Number ) -> Number -> Grid -> Result String Grid
 setCell (x, y) value grid =

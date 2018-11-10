@@ -5,7 +5,7 @@ import Browser
 import Grid exposing (Number (..), Grid, CellValue (..), Cells, puzzle, numberFromIndex)
 import Model exposing (Model (..), Flags, Selection (..))
 import Msg exposing (Msg (..), update)
-import Subs exposing (navigate, input)
+import Subs exposing (navigate, input, zoom)
 import Utils exposing (resTraverse)
 import View exposing (view)
 
@@ -45,5 +45,5 @@ main =
     { view = view
     , init = init
     , update = update
-    , subscriptions = \model -> Sub.batch [ navigate model, input model ]
+    , subscriptions = \model -> Sub.batch [ navigate, input model, zoom model ]
     }
