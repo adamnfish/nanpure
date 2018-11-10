@@ -56,23 +56,34 @@ zoom model =
 
 selectGrid : Int -> Msg
 selectGrid keyCode =
-  if keyCode == 48 then
-    SelectGrid
-  else
-    NoOp
+  case keyCode of
+    -- 0 or numpad 0
+    48 -> SelectGrid
+    96 -> SelectGrid
+    _ -> NoOp
 
 zoomKeys : ( Number -> Msg ) -> Int -> Msg
 zoomKeys f keyCode =
   case keyCode of
-    49 -> f One
-    50 -> f Two
-    51 -> f Three
-    52 -> f Four
-    53 -> f Five
-    54 -> f Six
-    55 -> f Seven
-    56 -> f Eight
-    57 -> f Nine
+    -- number row or numpad
+    49  -> f One
+    97  -> f One
+    50  -> f Two
+    98  -> f Two
+    51  -> f Three
+    99  -> f Three
+    52  -> f Four
+    100 -> f Four
+    53  -> f Five
+    101 -> f Five
+    54  -> f Six
+    102 -> f Six
+    55  -> f Seven
+    103 -> f Seven
+    56  -> f Eight
+    104 -> f Eight
+    57  -> f Nine
+    105 -> f Nine
 
     _ -> NoOp
 
