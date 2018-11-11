@@ -51,7 +51,11 @@ update msg model =
         Enter location value ->
           case ( setCell location value grid ) of
             Err message ->
-              ( Error message, Cmd.none )
+              -- Debug.log message
+              -- or exclude fxed cells
+              ( Playing grid selection
+              , Cmd.none
+              )
             Ok updatedGrid ->
               ( Playing updatedGrid selection
               , Cmd.none
@@ -59,7 +63,11 @@ update msg model =
         Delete location ->
           case ( clearCell location grid ) of
             Err message ->
-              ( Error message, Cmd.none )
+              -- Debug.log message
+              -- or exclude fxed cells
+              ( Playing grid selection
+              , Cmd.none
+              )
             Ok updatedGrid ->
               ( Playing updatedGrid selection
               , Cmd.none
@@ -79,7 +87,6 @@ update msg model =
             ( Playing grid ( SelectedCell selectedCell )
             , Cmd.none
             )
-
 
 
 moveSelection : (Int, Int) -> Selection -> Selection

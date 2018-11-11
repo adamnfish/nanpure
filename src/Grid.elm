@@ -2,7 +2,7 @@ module Grid exposing
   ( Number (..), Grid, CellValue (..), Cells
   , emptyGrid, getCell, getRow, getCol, getSquare, cellInSquare, setCell, clearCell, puzzle
   , gridAsString, numberAsString, numberAsIndex, numberFromIndex, numberMod
-  , cellBySquareAndCellIndices
+  , cellBySquareAndCellIndices, getCellSquare
   )
 
 import Array exposing (Array)
@@ -215,31 +215,39 @@ getCol x ( Grid rows ) =
     arrayToCells col
 
 getSquare : Number -> Grid -> Cells
-getSquare i grid =
-  -- TODO
-  case i of
-    One -> 
-      cells
-        ( getCell (One, One) grid )
-        ( getCell (One, Two) grid )
-        ( getCell (One, Three) grid )
-        ( getCell (Two, One) grid )
-        ( getCell (Two, Two) grid )
-        ( getCell (Two, Three) grid )
-        ( getCell (Three, One) grid )
-        ( getCell (Three, Two) grid )
-        ( getCell (Three, Three) grid )
-    _ ->
-      cells
-        ( getCell (One, Four) grid )
-        ( getCell (One, Five) grid )
-        ( getCell (One, Six) grid )
-        ( getCell (Two, Four) grid )
-        ( getCell (Two, Five) grid )
-        ( getCell (Two, Six) grid )
-        ( getCell (Three, Four) grid )
-        ( getCell (Three, Five) grid )
-        ( getCell (Three, Six) grid )
+getSquare squareNum grid =
+  let
+    (x0, y0) =
+      case squareNum of
+        One ->
+          ( One, One )
+        Two ->
+          ( Four, One )
+        Three ->
+          ( Seven, One )
+        Four ->
+          ( One, Four )
+        Five ->
+          ( Four, Four )
+        Six ->
+          ( Seven, Four )
+        Seven ->
+          ( One, Seven )
+        Eight ->
+          ( Four, Seven )
+        Nine ->
+          ( Seven, Seven )
+  in
+    cells
+      ( getCell ( numberMod x0 0, numberMod y0 0 ) grid )
+      ( getCell ( numberMod x0 1, numberMod y0 0 ) grid )
+      ( getCell ( numberMod x0 2, numberMod y0 0 ) grid )
+      ( getCell ( numberMod x0 0, numberMod y0 1 ) grid )
+      ( getCell ( numberMod x0 1, numberMod y0 1 ) grid )
+      ( getCell ( numberMod x0 2, numberMod y0 1 ) grid )
+      ( getCell ( numberMod x0 0, numberMod y0 2 ) grid )
+      ( getCell ( numberMod x0 1, numberMod y0 2 ) grid )
+      ( getCell ( numberMod x0 2, numberMod y0 2 ) grid )
 
 cellInSquare : Number -> (Number, Number) -> Bool
 cellInSquare squareNum (xNum, yNum) =
@@ -251,6 +259,19 @@ cellInSquare squareNum (xNum, yNum) =
     yMatches = ( squareIndex // 3 ) == ( y // 3 )
   in
     xMatches && yMatches
+
+getCellSquare : (Number, Number) -> Number
+getCellSquare (xNum, yNum) =
+  let
+    xi = numberAsIndex xNum
+    yi = numberAsIndex yNum
+    result = numberFromIndex ( ( xi // 3 ) + ( 3 * ( yi // 3 ) ) )
+  in
+    case result of
+      Ok num ->
+        num
+      Err message ->
+        One
 
 setCell : ( Number, Number ) -> Number -> Grid -> Result String Grid
 setCell (x, y) value grid =
@@ -275,7 +296,6 @@ cellAsString cell =
 cellStr : (Number, Number) -> Grid -> String
 cellStr cell grid =
   cellAsString ( getCell cell grid )
-
 
 gridAsString : Grid -> String
 gridAsString grid =

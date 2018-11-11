@@ -9,7 +9,7 @@ import Test exposing (..)
 import Grid exposing
   (Grid, Number (..), CellValue (..)
   , emptyGrid, getCell, setCell, clearCell, puzzle, cellInSquare
-  , cellBySquareAndCellIndices
+  , cellBySquareAndCellIndices, getCellSquare, getSquare
   )
 
 
@@ -149,7 +149,62 @@ suite =
         , test "retrieves the correct cell for Two Two" <|
           \_ ->
             Expect.equal (Five, One) ( cellBySquareAndCellIndices Two Two )
-
+        ]
+      , describe "getCellSquare"
+        [ test "returns One for (One, One)" <|
+          \_ ->
+            Expect.equal One ( getCellSquare (One, One))
+        , test "returns One for (Three, Three)" <|
+          \_ ->
+            Expect.equal One ( getCellSquare (Three, Three))
+        , test "returns Three for (Seven, Two)" <|
+          \_ ->
+            Expect.equal Three ( getCellSquare (Seven, Two))
+        , test "returns Five for (Six, Four)" <|
+          \_ ->
+            Expect.equal Five ( getCellSquare (Six, Four))
+        , test "returns Nine for (Eight, Nine)" <|
+          \_ ->
+            Expect.equal Nine ( getCellSquare (Eight, Nine))
+        , test "returns Nine for (Nine, Nine)" <|
+          \_ ->
+            Expect.equal Nine ( getCellSquare (Nine, Nine))
+        ]
+      , describe "getSquare"
+        [ test "Returns square one in a puzzle" <|
+          \_ ->
+            let
+              gridRes =
+                puzzle
+                  [ ((One, One), One)
+                  , ((Two, One), Two)
+                  , ((Three, One), Three)
+                  , ((One, Two), Four)
+                  , ((Two, Two), Five)
+                  , ((Three, Two), Six)
+                  , ((One, Three), Seven)
+                  , ((Two, Three), Eight)
+                  , ((Three, Three), Nine)
+                  ]
+              expected =
+                { c1 = Fixed One
+                , c2 = Fixed Two
+                , c3 = Fixed Three
+                , c4 = Fixed Four
+                , c5 = Fixed Five
+                , c6 = Fixed Six
+                , c7 = Fixed Seven
+                , c8 = Fixed Eight
+                , c9 = Fixed Nine
+                }
+            in
+              case gridRes of
+                Err message ->
+                  Expect.fail message
+                Ok grid ->
+                  Expect.equal
+                    ( getSquare One grid )
+                    expected
         ]
       ]
 
