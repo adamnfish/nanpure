@@ -27,17 +27,17 @@ view model =
         [ text msg ]
     Playing grid selection ->
       div [ class "nanpure--container" ]
-        [ ( gridDisplay selection grid )
+        [ ( gridDisplay False selection grid )
         ]
     Completed grid ->
       div [ class "nanpure--container" ]
-        [ ( gridDisplay NoSelection grid )
+        [ ( gridDisplay True NoSelection grid )
         ]
 
-gridDisplay : Selection -> Grid -> Html Msg
-gridDisplay selection grid =
+gridDisplay : Bool -> Selection -> Grid -> Html Msg
+gridDisplay isComplete selection grid =
   let
-    cellsEls = cells selection grid
+    cellsEls = cells isComplete selection grid
     dividers =
       [ Svg.line
         [ x1 "0"
@@ -80,8 +80,8 @@ gridDisplay selection grid =
       ]
       ( cellsEls ++ dividers )
 
-displayCell : Selection -> (Number, Number) -> Grid -> List ( Html Msg )
-displayCell selection (xNum, yNum) grid =
+displayCell : Bool -> Selection -> (Number, Number) -> Grid -> List ( Html Msg )
+displayCell isComplete selection (xNum, yNum) grid =
   let
     cellValue = getCell (xNum, yNum) grid
     selected =
@@ -102,21 +102,23 @@ displayCell selection (xNum, yNum) grid =
   in
     case cellValue of
       Empty ->
-        cellHtml "" (xNum, yNum) False selected cellIsValid
+        cellHtml "" (xNum, yNum) isComplete False selected cellIsValid
       Input num ->
-        cellHtml ( numberAsString num ) (xNum, yNum) False selected cellIsValid
+        cellHtml ( numberAsString num ) (xNum, yNum) isComplete False selected cellIsValid
       Fixed num ->
-        cellHtml ( numberAsString num ) (xNum, yNum) True selected cellIsValid
+        cellHtml ( numberAsString num ) (xNum, yNum) isComplete True selected cellIsValid
 
-cellHtml : String -> (Number, Number) -> Bool -> Bool -> Bool -> List ( Html Msg )
-cellHtml contents (xNum, yNum) fixed selected isValid =
+cellHtml : String -> (Number, Number) -> Bool -> Bool -> Bool -> Bool -> List ( Html Msg )
+cellHtml contents (xNum, yNum) isComplete fixed selected isValid =
   let
     xi = numberAsIndex xNum
     yi = numberAsIndex yNum
-    xTextOffset = 22
-    yTextOffset = 29
+    xTextOffset = 21
+    yTextOffset = 30
     fillColour =
-      if fixed then
+      if isComplete then
+        "#44ff44"
+      else if fixed then
         if selected then
           "#999999"
         else
@@ -126,7 +128,7 @@ cellHtml contents (xNum, yNum) fixed selected isValid =
             "#cc9999"
       else
         if selected then
-          "#cccc88"
+          "#ffff44"
         else
           if isValid then
             "#ffffff"
@@ -141,6 +143,7 @@ cellHtml contents (xNum, yNum) fixed selected isValid =
       , x ( String.fromInt ( 50 * xi ) )
       , y ( String.fromInt ( 50 * yi ) )
       , fill fillColour
+      , Html.Events.onClick ( SelectCell (xNum, yNum) )
       ]
       []
     , Svg.text_
@@ -150,88 +153,88 @@ cellHtml contents (xNum, yNum) fixed selected isValid =
       [ text contents ]
     ]
 
-cells : Selection -> Grid -> List ( Html Msg )
-cells selection grid =
+cells : Bool -> Selection -> Grid -> List ( Html Msg )
+cells isComplete selection grid =
   flattenList
-    [ displayCell selection (One, One) grid
-    , displayCell selection (Two, One) grid
-    , displayCell selection (Three, One) grid
-    , displayCell selection (Four, One) grid
-    , displayCell selection (Five, One) grid
-    , displayCell selection (Six, One) grid
-    , displayCell selection (Seven, One) grid
-    , displayCell selection (Eight, One) grid
-    , displayCell selection (Nine, One) grid
-    , displayCell selection (One, Two) grid
-    , displayCell selection (Two, Two) grid
-    , displayCell selection (Three, Two) grid
-    , displayCell selection (Four, Two) grid
-    , displayCell selection (Five, Two) grid
-    , displayCell selection (Six, Two) grid
-    , displayCell selection (Seven, Two) grid
-    , displayCell selection (Eight, Two) grid
-    , displayCell selection (Nine, Two) grid
-    , displayCell selection (One, Three) grid
-    , displayCell selection (Two, Three) grid
-    , displayCell selection (Three, Three) grid
-    , displayCell selection (Four, Three) grid
-    , displayCell selection (Five, Three) grid
-    , displayCell selection (Six, Three) grid
-    , displayCell selection (Seven, Three) grid
-    , displayCell selection (Eight, Three) grid
-    , displayCell selection (Nine, Three) grid
-    , displayCell selection (One, Four) grid
-    , displayCell selection (Two, Four) grid
-    , displayCell selection (Three, Four) grid
-    , displayCell selection (Four, Four) grid
-    , displayCell selection (Five, Four) grid
-    , displayCell selection (Six, Four) grid
-    , displayCell selection (Seven, Four) grid
-    , displayCell selection (Eight, Four) grid
-    , displayCell selection (Nine, Four) grid
-    , displayCell selection (One, Five) grid
-    , displayCell selection (Two, Five) grid
-    , displayCell selection (Three, Five) grid
-    , displayCell selection (Four, Five) grid
-    , displayCell selection (Five, Five) grid
-    , displayCell selection (Six, Five) grid
-    , displayCell selection (Seven, Five) grid
-    , displayCell selection (Eight, Five) grid
-    , displayCell selection (Nine, Five) grid
-    , displayCell selection (One, Six) grid
-    , displayCell selection (Two, Six) grid
-    , displayCell selection (Three, Six) grid
-    , displayCell selection (Four, Six) grid
-    , displayCell selection (Five, Six) grid
-    , displayCell selection (Six, Six) grid
-    , displayCell selection (Seven, Six) grid
-    , displayCell selection (Eight, Six) grid
-    , displayCell selection (Nine, Six) grid
-    , displayCell selection (One, Seven) grid
-    , displayCell selection (Two, Seven) grid
-    , displayCell selection (Three, Seven) grid
-    , displayCell selection (Four, Seven) grid
-    , displayCell selection (Five, Seven) grid
-    , displayCell selection (Six, Seven) grid
-    , displayCell selection (Seven, Seven) grid
-    , displayCell selection (Eight, Seven) grid
-    , displayCell selection (Nine, Seven) grid
-    , displayCell selection (One, Eight) grid
-    , displayCell selection (Two, Eight) grid
-    , displayCell selection (Three, Eight) grid
-    , displayCell selection (Four, Eight) grid
-    , displayCell selection (Five, Eight) grid
-    , displayCell selection (Six, Eight) grid
-    , displayCell selection (Seven, Eight) grid
-    , displayCell selection (Eight, Eight) grid
-    , displayCell selection (Nine, Eight) grid
-    , displayCell selection (One, Nine) grid
-    , displayCell selection (Two, Nine) grid
-    , displayCell selection (Three, Nine) grid
-    , displayCell selection (Four, Nine) grid
-    , displayCell selection (Five, Nine) grid
-    , displayCell selection (Six, Nine) grid
-    , displayCell selection (Seven, Nine) grid
-    , displayCell selection (Eight, Nine) grid
-    , displayCell selection (Nine, Nine) grid
+    [ displayCell isComplete selection (One, One) grid
+    , displayCell isComplete selection (Two, One) grid
+    , displayCell isComplete selection (Three, One) grid
+    , displayCell isComplete selection (Four, One) grid
+    , displayCell isComplete selection (Five, One) grid
+    , displayCell isComplete selection (Six, One) grid
+    , displayCell isComplete selection (Seven, One) grid
+    , displayCell isComplete selection (Eight, One) grid
+    , displayCell isComplete selection (Nine, One) grid
+    , displayCell isComplete selection (One, Two) grid
+    , displayCell isComplete selection (Two, Two) grid
+    , displayCell isComplete selection (Three, Two) grid
+    , displayCell isComplete selection (Four, Two) grid
+    , displayCell isComplete selection (Five, Two) grid
+    , displayCell isComplete selection (Six, Two) grid
+    , displayCell isComplete selection (Seven, Two) grid
+    , displayCell isComplete selection (Eight, Two) grid
+    , displayCell isComplete selection (Nine, Two) grid
+    , displayCell isComplete selection (One, Three) grid
+    , displayCell isComplete selection (Two, Three) grid
+    , displayCell isComplete selection (Three, Three) grid
+    , displayCell isComplete selection (Four, Three) grid
+    , displayCell isComplete selection (Five, Three) grid
+    , displayCell isComplete selection (Six, Three) grid
+    , displayCell isComplete selection (Seven, Three) grid
+    , displayCell isComplete selection (Eight, Three) grid
+    , displayCell isComplete selection (Nine, Three) grid
+    , displayCell isComplete selection (One, Four) grid
+    , displayCell isComplete selection (Two, Four) grid
+    , displayCell isComplete selection (Three, Four) grid
+    , displayCell isComplete selection (Four, Four) grid
+    , displayCell isComplete selection (Five, Four) grid
+    , displayCell isComplete selection (Six, Four) grid
+    , displayCell isComplete selection (Seven, Four) grid
+    , displayCell isComplete selection (Eight, Four) grid
+    , displayCell isComplete selection (Nine, Four) grid
+    , displayCell isComplete selection (One, Five) grid
+    , displayCell isComplete selection (Two, Five) grid
+    , displayCell isComplete selection (Three, Five) grid
+    , displayCell isComplete selection (Four, Five) grid
+    , displayCell isComplete selection (Five, Five) grid
+    , displayCell isComplete selection (Six, Five) grid
+    , displayCell isComplete selection (Seven, Five) grid
+    , displayCell isComplete selection (Eight, Five) grid
+    , displayCell isComplete selection (Nine, Five) grid
+    , displayCell isComplete selection (One, Six) grid
+    , displayCell isComplete selection (Two, Six) grid
+    , displayCell isComplete selection (Three, Six) grid
+    , displayCell isComplete selection (Four, Six) grid
+    , displayCell isComplete selection (Five, Six) grid
+    , displayCell isComplete selection (Six, Six) grid
+    , displayCell isComplete selection (Seven, Six) grid
+    , displayCell isComplete selection (Eight, Six) grid
+    , displayCell isComplete selection (Nine, Six) grid
+    , displayCell isComplete selection (One, Seven) grid
+    , displayCell isComplete selection (Two, Seven) grid
+    , displayCell isComplete selection (Three, Seven) grid
+    , displayCell isComplete selection (Four, Seven) grid
+    , displayCell isComplete selection (Five, Seven) grid
+    , displayCell isComplete selection (Six, Seven) grid
+    , displayCell isComplete selection (Seven, Seven) grid
+    , displayCell isComplete selection (Eight, Seven) grid
+    , displayCell isComplete selection (Nine, Seven) grid
+    , displayCell isComplete selection (One, Eight) grid
+    , displayCell isComplete selection (Two, Eight) grid
+    , displayCell isComplete selection (Three, Eight) grid
+    , displayCell isComplete selection (Four, Eight) grid
+    , displayCell isComplete selection (Five, Eight) grid
+    , displayCell isComplete selection (Six, Eight) grid
+    , displayCell isComplete selection (Seven, Eight) grid
+    , displayCell isComplete selection (Eight, Eight) grid
+    , displayCell isComplete selection (Nine, Eight) grid
+    , displayCell isComplete selection (One, Nine) grid
+    , displayCell isComplete selection (Two, Nine) grid
+    , displayCell isComplete selection (Three, Nine) grid
+    , displayCell isComplete selection (Four, Nine) grid
+    , displayCell isComplete selection (Five, Nine) grid
+    , displayCell isComplete selection (Six, Nine) grid
+    , displayCell isComplete selection (Seven, Nine) grid
+    , displayCell isComplete selection (Eight, Nine) grid
+    , displayCell isComplete selection (Nine, Nine) grid
     ]

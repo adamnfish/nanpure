@@ -14,6 +14,7 @@ type Msg
   | SelectGrid
   | SelectSquare Number
   | SelectSquareCell Number Number
+  | SelectCell (Number, Number)
   | Enter (Number, Number) Number
   | Delete (Number, Number)
 
@@ -87,6 +88,10 @@ update msg model =
             ( Playing grid ( SelectedCell selectedCell )
             , Cmd.none
             )
+        SelectCell (x, y) ->
+          ( Playing grid ( SelectedCell (x, y) )
+          , Cmd.none
+          )
 
 
 moveSelection : (Int, Int) -> Selection -> Selection
