@@ -1,0 +1,15 @@
+{
+  "main.css": "/nanpure/static/css/main.1e0edaa0.chunk.css",
+  "main.js": "/nanpure/static/js/main.94c4641d.chunk.js",
+  "main.js.map": "/nanpure/static/js/main.94c4641d.chunk.js.map",
+  "runtime~main.js": "/nanpure/static/js/runtime~main.737f764c.js",
+  "runtime~main.js.map": "/nanpure/static/js/runtime~main.737f764c.js.map",
+  "vendors~main.js": "/nanpure/static/js/vendors~main.3ca81432.chunk.js",
+  "vendors~main.js.map": "/nanpure/static/js/vendors~main.3ca81432.chunk.js.map",
+  "./service-worker.js": "/nanpure/./service-worker.js",
+  "favicon.ico": "/nanpure/favicon.ico",
+  "index.html": "/nanpure/index.html",
+  "logo.svg": "/nanpure/logo.svg",
+  "manifest.json": "/nanpure/manifest.json",
+  "precache-manifest.13e4e39a9822922517a63cb80aa71935.js": "/nanpure/precache-manifest.13e4e39a9822922517a63cb80aa71935.js"
+}
