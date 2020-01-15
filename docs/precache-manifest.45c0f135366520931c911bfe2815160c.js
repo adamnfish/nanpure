@@ -4,7 +4,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/nanpure/favicon.ico"
   },
   {
-    "revision": "cea807bb5ee8231c332998fddcfff086",
+    "revision": "941e7c7a9ecb61ea904a54e0c1d47510",
     "url": "/nanpure/index.html"
   },
   {
