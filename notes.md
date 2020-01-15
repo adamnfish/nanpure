@@ -2,11 +2,8 @@
 
 ## TODO
 
-* centre numbers more accurately
 * slightly larger font?
 * make space for thick borders
-* check for puzzle completion
-* change selection colour to yellow (green for valid)
 * arrow navigation for selected square
 * grid status border
 * options for displaying errors
@@ -18,3 +15,9 @@ Outside this app
 * page around this for obtaining puzzles
   - probably via server-side calls
 
+
+DONE
+* centre numbers more accurately
+* change selection colour to yellow (green for valid)
+* check for puzzle completion
+* mobile-friendly number input
