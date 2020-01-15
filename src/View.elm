@@ -1,7 +1,7 @@
 module View exposing (view)
 
-import Html exposing (Html, text, div, h1, img, text)
-import Html.Attributes exposing (src, class)
+import Html exposing (Html, text, div, h1, img, text, button)
+import Html.Attributes exposing (src, class, disabled)
 import Html.Events
 import Svg exposing (svg)
 import Svg.Attributes exposing
@@ -28,11 +28,44 @@ view model =
     Playing grid selection ->
       div [ class "nanpure--container" ]
         [ ( gridDisplay False selection grid )
+        , controls selection
         ]
     Completed grid ->
       div [ class "nanpure--container" ]
         [ ( gridDisplay True NoSelection grid )
         ]
+
+controls : Selection -> Html Msg
+controls selection =
+    case selection of
+        SelectedCell (xNum, yNum) ->
+            div
+              [ class "nanpure--controls" ]
+              [ button [ Html.Events.onClick ( Delete (xNum, yNum) )] [ text "x" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) One )] [ text "1" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) Two )] [ text "2" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) Three )] [ text "3" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) Four )] [ text "4" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) Five )] [ text "5" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) Six )] [ text "6" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) Seven )] [ text "7" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) Eight )] [ text "8" ]
+              , button [ Html.Events.onClick ( Enter (xNum, yNum) Nine )] [ text "9" ]
+              ]
+        _ ->
+            div
+              [ class "nanpure--controls" ]
+              [ button [ disabled True] [ text "x" ]
+              , button [ disabled True] [ text "1" ]
+              , button [ disabled True] [ text "2" ]
+              , button [ disabled True] [ text "3" ]
+              , button [ disabled True] [ text "4" ]
+              , button [ disabled True] [ text "5" ]
+              , button [ disabled True] [ text "6" ]
+              , button [ disabled True] [ text "7" ]
+              , button [ disabled True] [ text "8" ]
+              , button [ disabled True] [ text "9" ]
+              ]
 
 gridDisplay : Bool -> Selection -> Grid -> Html Msg
 gridDisplay isComplete selection grid =
