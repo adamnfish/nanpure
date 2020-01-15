@@ -2,6 +2,7 @@ module Msg exposing (Msg (..), update)
 
 import Grid exposing (Number (..), numberMod, setCell, clearCell, cellBySquareAndCellIndices)
 import Model exposing (Model (..), Selection (..))
+import Puzzle exposing (complete)
 
 
 type Msg
@@ -58,9 +59,14 @@ update msg model =
               , Cmd.none
               )
             Ok updatedGrid ->
-              ( Playing updatedGrid selection
-              , Cmd.none
-              )
+              if complete updatedGrid then
+                ( Completed updatedGrid
+                , Cmd.none
+                )
+              else
+                ( Playing updatedGrid selection
+                , Cmd.none
+                )
         Delete location ->
           case ( clearCell location grid ) of
             Err message ->

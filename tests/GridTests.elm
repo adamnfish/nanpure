@@ -6,11 +6,7 @@ import List.Extra
 import Set exposing (Set)
 import Test exposing (..)
 
-import Grid exposing
-  (Grid, Number (..), CellValue (..)
-  , emptyGrid, getCell, setCell, clearCell, puzzle, cellInSquare
-  , cellBySquareAndCellIndices, getCellSquare, getSquare
-  )
+import Grid exposing (CellValue(..), Grid, Number(..), cellBySquareAndCellIndices, cellInSquare, clearCell, emptyGrid, getCell, getCellSquare, getSquare, isFilled, puzzle, setCell)
 
 
 numFuzzer : Fuzzer Number
@@ -247,4 +243,60 @@ suite =
               |> Expect.err
         ]
       ]
+
+      , describe "isFilled"
+        [ test "is false for an empty grid" <|
+          \_ ->
+            Expect.false "empty grid is not full" <| isFilled emptyGrid
+        , test "is false for a partly-populated grid" <|
+          \_ ->
+            let
+              gridResult =
+                setCell (Nine, Nine) One emptyGrid
+            in
+              case gridResult of
+                Ok grid ->
+                  Expect.false "empty grid is not full" <| isFilled grid
+                Err _ ->
+                  Expect.fail "invalid test puzzle"
+        , test "is true for a full grid" <|
+          \_ ->
+            let
+              gridResult =
+                puzzle
+                  [ ((One, One), One), ((One, Two), One), ((One, Three), One)
+                  , ((One, Four), One), ((One, Five), One), ((One, Six), One)
+                  , ((One, Seven), One), ((One, Eight), One), ((One, Nine), One)
+                  , ((Two, One), One), ((Two, Two), One), ((Two, Three), One)
+                  , ((Two, Four), One), ((Two, Five), One), ((Two, Six), One)
+                  , ((Two, Seven), One), ((Two, Eight), One), ((Two, Nine), One)
+                  , ((Three, One), One), ((Three, Two), One), ((Three, Three), One)
+                  , ((Three, Four), One), ((Three, Five), One), ((Three, Six), One)
+                  , ((Three, Seven), One), ((Three, Eight), One), ((Three, Nine), One)
+                  , ((Four, One), One), ((Four, Two), One), ((Four, Three), One)
+                  , ((Four, Four), One), ((Four, Five), One), ((Four, Six), One)
+                  , ((Four, Seven), One), ((Four, Eight), One), ((Four, Nine), One)
+                  , ((Five, One), One), ((Five, Two), One), ((Five, Three), One)
+                  , ((Five, Four), One), ((Five, Five), One), ((Five, Six), One)
+                  , ((Five, Seven), One), ((Five, Eight), One), ((Five, Nine), One)
+                  , ((Six, One), One), ((Six, Two), One), ((Six, Three), One)
+                  , ((Six, Four), One), ((Six, Five), One), ((Six, Six), One)
+                  , ((Six, Seven), One), ((Six, Eight), One), ((Six, Nine), One)
+                  , ((Seven, One), One), ((Seven, Two), One), ((Seven, Three), One)
+                  , ((Seven, Four), One), ((Seven, Five), One), ((Seven, Six), One)
+                  , ((Seven, Seven), One), ((Seven, Eight), One), ((Seven, Nine), One)
+                  , ((Eight, One), One), ((Eight, Two), One), ((Eight, Three), One)
+                  , ((Eight, Four), One), ((Eight, Five), One), ((Eight, Six), One)
+                  , ((Eight, Seven), One), ((Eight, Eight), One), ((Eight, Nine), One)
+                  , ((Nine, One), One), ((Nine, Two), One), ((Nine, Three), One)
+                  , ((Nine, Four), One), ((Nine, Five), One), ((Nine, Six), One)
+                  , ((Nine, Seven), One), ((Nine, Eight), One), ((Nine, Nine), One)
+                  ]
+            in
+              case gridResult of
+                Ok grid ->
+                  Expect.true "full puzzle" <| isFilled grid
+                _ ->
+                  Expect.fail "Invalid test puzzle"
+        ]
     ]

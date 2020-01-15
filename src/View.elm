@@ -32,8 +32,7 @@ view model =
         ]
     Completed grid ->
       div [ class "nanpure--container" ]
-        [ ( gridDisplay True NoSelection grid )
-        ]
+        [ ( gridDisplay True NoSelection grid ) ]
 
 controls : Selection -> Html Msg
 controls selection =
@@ -150,7 +149,7 @@ cellHtml contents (xNum, yNum) isComplete fixed selected isValid =
     yTextOffset = 30
     fillColour =
       if isComplete then
-        "#44ff44"
+        "#99ff99"
       else if fixed then
         if selected then
           "#999999"

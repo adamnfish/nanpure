@@ -2,7 +2,7 @@ module Grid exposing
   ( Number (..), Grid, CellValue (..), Cells
   , emptyGrid, getCell, getRow, getCol, getSquare, cellInSquare, setCell, clearCell, puzzle
   , gridAsString, numberAsString, numberAsIndex, numberFromIndex, numberMod
-  , cellBySquareAndCellIndices, getCellSquare
+  , cellBySquareAndCellIndices, getCellSquare, isFilled
   )
 
 import Array exposing (Array)
@@ -280,6 +280,26 @@ setCell (x, y) value grid =
 clearCell : ( Number, Number ) -> Grid -> Result String Grid
 clearCell (x, y) grid =
   updateCell (x, y) Empty grid
+
+isFilled : Grid -> Bool
+isFilled grid =
+  case grid of
+    Grid arrOfCells ->
+      Array.foldl
+        (\row full ->
+          Array.foldl
+            (\cellValue rowFull ->
+              case cellValue of
+                Empty ->
+                  False
+                _ ->
+                  rowFull && full
+            )
+            True
+            row
+        )
+        True
+        arrOfCells
 
 -- representations
 
