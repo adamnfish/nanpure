@@ -1,19 +1,21 @@
-module Model exposing (Selection (..), Model (..), Flags)
+module Model exposing (Flags, Model(..), Selection(..))
 
-import Grid exposing (Grid, Number (..))
+import Grid exposing (Grid, Number(..))
 
 
 type Selection
-  = NoSelection
-  | SelectedCell (Number, Number)
-  | SelectedGrid
-  | SelectedSquare Number
+    = NoSelection
+    | SelectedCell ( Number, Number )
+    | SelectedGrid
+    | SelectedSquare Number
+
 
 type Model
-  = Error String
-  | Playing Grid Selection
-  | Completed Grid
+    = Error String
+    | Playing Grid Selection
+    | Completed Grid
+
 
 type alias Flags =
-  { fixedCells : List ((Int, Int), Int)
-  }
+    { fixedCells : List ( ( Int, Int ), Int )
+    }
