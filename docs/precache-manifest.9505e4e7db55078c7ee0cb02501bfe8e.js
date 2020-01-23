@@ -4,7 +4,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/nanpure/favicon.ico"
   },
   {
-    "revision": "cea807bb5ee8231c332998fddcfff086",
+    "revision": "d4af289c6b53c6b9059d1e940b59079c",
     "url": "/nanpure/index.html"
   },
   {
@@ -16,12 +16,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/nanpure/manifest.json"
   },
   {
-    "revision": "94c4641d4060cebfb1a0",
+    "revision": "164861ac209cb5a08ffc",
     "url": "/nanpure/static/css/main.1e0edaa0.chunk.css"
   },
   {
-    "revision": "94c4641d4060cebfb1a0",
-    "url": "/nanpure/static/js/main.94c4641d.chunk.js"
+    "revision": "164861ac209cb5a08ffc",
+    "url": "/nanpure/static/js/main.164861ac.chunk.js"
   },
   {
     "revision": "737f764c5c2c438b9092",
